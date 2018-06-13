@@ -1,26 +1,20 @@
 package pe.edu.unmsm.sistemas.serviceImpl;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 import javax.servlet.http.HttpSession;
 
+import org.json.JSONObject;
+import org.json.JSONArray;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.client.RestTemplate;
 
-import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.DocumentSnapshot;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.FirestoreOptions;
-import com.google.cloud.firestore.QueryDocumentSnapshot;
-import com.google.cloud.firestore.QuerySnapshot;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
-import com.google.gson.Gson;
 
 import pe.edu.unmsm.sistemas.service.LoginService;
 
@@ -38,10 +32,39 @@ public class LoginServiceImplementation implements LoginService{
 	@Override
 	public String verifyLogin(String usuario, String contrasenia, HttpSession session, Model model) throws InterruptedException, ExecutionException, IOException {
 		String rpta = "showLoginForm";
-		//serviceAccount = new FileInputStream("C:\\brian\\proyectos\\FRAMEWORK WEB\\SPRING\\SISESI\\pruebabajo-firebase-adminsdk-v2vin-fb34492ee0.json");
+		String uri = base_rest + ":runQuery";
+		RestTemplate restTemplate = new RestTemplate();
+	    String result = restTemplate.postForObject( uri, "{\r\n" + 
+	    		"    \"structuredQuery\": {\r\n" + 
+	    		"    	\"select\": { \"fields\": [ {\"fieldPath\": \"id\"}, ],	},\r\n" + 
+	    		"        \"where\" : {\r\n" + 
+	    		"        	\"compositeFilter\" :\r\n" + 
+	    		"        	{\r\n" + 
+	    		"        		\"op\": \"AND\",\r\n" + 
+	    		"        		\"filters\": [\r\n" + 
+	    		"	    			{ \"fieldFilter\" : { \"field\": {\"fieldPath\": \"id\"}, \"op\":\"EQUAL\", \"value\": {\"stringValue\": \"" + usuario + "\"} } },\r\n" + 
+	    		"	    			{ \"fieldFilter\" : { \"field\": {\"fieldPath\": \"password\"}, \"op\":\"EQUAL\", \"value\": {\"stringValue\": \"" + contrasenia + "\"} } },\r\n" + 
+	    		"    			],\r\n" + 
+	    		"        	}\r\n" + 
+	    		"        },\r\n" + 
+	    		"        \"from\": [{\"collectionId\": \"usuarios\"}]\r\n" + 
+	    		"    }\r\n" + 
+	    		"}", String.class);
+	    JSONObject jsonObj = new JSONObject(result.replace("[", "").replace("]", ""));
+    	if(jsonObj.has("document"))
+    	{
+		    //Gson gsonObj = new Gson();
+	    	usuario = jsonObj.getJSONObject("document").getJSONObject("fields").getJSONObject("id").getString("stringValue");
+	    	session.setAttribute("usersession",usuario);
+	    	rpta="menu";
+			return "redirect:/"+rpta;
+    	}
+		/*ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource("proyectosegsil.json").getFile());
 		if(!inicializado) {
 			FirestoreOptions firestoreOptions =
 			        FirestoreOptions.getDefaultInstance().toBuilder()
+			        	.setCredentials(GoogleCredentials.fromStream(new FileInputStream(file)))
 			            .setProjectId("proyectosegsil")
 			            .build();
 			
@@ -60,27 +83,61 @@ public class LoginServiceImplementation implements LoginService{
 			  }
 		  }
 		}
-		model.addAttribute("loginError","Usuario o contraseña errado.");
+		model.addAttribute("loginError","Usuario o contraseï¿½a errado.");*/
 		return "redirect:/";
 	}
 	
-	public String listarMenuOpciones(HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {		
-		Gson gsonObj = new Gson();
+	public String listarMenuOpciones(HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {
+		String uri = base_rest + "usuarios/" + session.getAttribute("usersession");
+		RestTemplate restTemplate = new RestTemplate();
+	    String result = restTemplate.getForObject(uri, String.class);
+		JSONObject jsonObj = new JSONObject(result);
+		String jsonStr=null;
+		if(jsonObj.getJSONObject("fields").has("perfil"))
+		{
+			jsonStr = jsonObj.getJSONObject("fields").getJSONObject("perfil").getJSONObject("mapValue").getJSONObject("fields").toString();
+		}
+	    /*Gson gsonObj = new Gson();
 		String id = (String) session.getAttribute("usersession");
 		DocumentReference docRef = db.collection("usuarios").document(id);
 		ApiFuture<DocumentSnapshot> future = docRef.get();
 		DocumentSnapshot document = future.get();
+	    
 		String jsonStr=null;
 		if (document.exists()) {
 		  jsonStr = gsonObj.toJson(document.get("perfil"));
 		} else {
 		  System.out.println("No hay documentos");
-		}
+		}*/
 		return jsonStr;
 	}
 	
-	public String listarCursosPorCoordinador(HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {		
-		Gson gsonObj = new Gson();
+	public String listarCursosPorCoordinador(HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {
+		String uri = base_rest + ":runQuery";
+		RestTemplate restTemplate = new RestTemplate();
+	    String result = restTemplate.postForObject( uri, "{\r\n" + 
+	    		"    \"structuredQuery\": {\r\n" + 
+	    		"    	\"select\": { \"fields\": [ {\"fieldPath\": \"id\"}, {\"fieldPath\": \"nombreCurso\"}, ], },\r\n" + 
+	    		"        \"where\" : { \"fieldFilter\" : { \"field\": {\"fieldPath\": \"idCoordinador\"}, \"op\":\"EQUAL\", \"value\": {\"stringValue\": \"" + session.getAttribute("usersession") + "\"} }, },\r\n" + 
+	    		"        \"from\": [{\"collectionId\": \"cursos\"}]\r\n" + 
+	    		"    }\r\n" + 
+	    		"}", String.class);
+		String listaDeCursos = " ";
+		JSONObject jsonObj = new JSONObject();
+	    JSONArray list_json = new JSONArray(result);
+	    for(int i=0;i<list_json.length();i++)
+	    {
+	    	jsonObj = list_json.getJSONObject(i);
+	    	if(jsonObj.has("document"))
+	    		if(jsonObj.getJSONObject("document").has("fields"))
+	    		{
+	    			listaDeCursos += "{ \"id\":\"" + jsonObj.getJSONObject("document").getJSONObject("fields").getJSONObject("id").getString("stringValue")
+	    							+ "\", \"nombreCurso\":\"" + jsonObj.getJSONObject("document").getJSONObject("fields").getJSONObject("nombreCurso").getString("stringValue") + "\"},";
+	    		}
+	    }
+	    listaDeCursos = "[" + listaDeCursos.substring(0, listaDeCursos.length()-1) + "]";
+	    //List<JSONObject> jsonObj = new List<JSONObject>(result);
+		/*Gson gsonObj = new Gson();
 		String idCoordinador = (String) session.getAttribute("usersession");
 		String jsonStr=null;
 		String listaDeCursos="";
@@ -101,8 +158,10 @@ public class LoginServiceImplementation implements LoginService{
 		}
 		listaDeCursos = listaDeCursos.substring(0, listaDeCursos.length()-1);
 		jsonStr = gsonObj.toJson("[" + listaDeCursos + "]");
-		return jsonStr;
+		return jsonStr;*/
+	    return listaDeCursos;
 	}
+	
 	//Unidad dicatica
 	public String listarUnidadDidactica(HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {		
 		String uri = base_rest + "silabus/" + session.getAttribute("idCurso") + "/unidades";

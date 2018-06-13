@@ -173,7 +173,7 @@
           	//Obtenemos las información de la lista de cursos asignados a este coordinador
         	$.ajax({
         		type : 'GET',
-        		dataType : 'json',
+        		dataType : 'text',
         		url : 'listarCursosPorCoordinador',
         		success : function(result) 
         		{
