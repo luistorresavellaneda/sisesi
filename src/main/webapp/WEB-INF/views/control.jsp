@@ -73,31 +73,19 @@
       		<div class="col-md-4">
       			<div class="form-group">
 				   <label for="exampleFormControlSelect1">Unidad didactica</label>
-				   <select class="form-control" id="unidadDidactica">
-				     <option>1</option>
-				     <option>2</option>
-				     <option>3</option>
-				   </select>
+				   <select class="form-control" id="unidadDidactica3" onchange="listarSemanas(this.value, 'semana3')"></select>
 				 </div>
       		</div>
       		<div class="col-md-4">
       			<div class="form-group">
 				   <label for="exampleFormControlSelect1">Semana</label>
-				   <select class="form-control" id="semana">
-				     <option>1</option>
-				     <option>2</option>
-				   </select>
+				   <select class="form-control" id="semana3" onchange="selectTemas(this.value, 'tema3')"></select>
 				 </div>
       		</div>
       		<div class="col-md-4">
       			<div class="form-group">
 				   <label for="exampleFormControlSelect1">Tema</label>
-				   <select class="form-control" id="tema">
-				     <option>Tema 01</option>
-				     <option>Tema 02</option>
-				     <option>Tema 03</option>
-				     <option>Tema 04</option>
-				   </select>
+				   <select class="form-control" id="tema3" onchange="listarActividades2(this.value)"></select>
 				 </div>
       		</div>
       	</div>
@@ -163,7 +151,8 @@
 	<!-- FUNCIONALIDAD AUXILIAR -->
     <script>
         $(document).ready(function () {        	
-        	listarMenuOpciones();        	
+        	listarMenuOpciones();  
+        	cargarUnidades("unidadDidactica3");
         	$('#inicio').click(function () {
         		$("li").removeClass();
         		$("#inicio").addClass("active");                
@@ -175,47 +164,7 @@
         	$('#rol2').click(function () {
         		$("li").removeClass();
         		$("#rol2").addClass("active");                
-            });
-        	
-        	/* TABLA DE CURSOS  */
-        	var dataSet = new Array();
-            var filaset = new Array();
-            
-            filaset.push('0');filaset.push('1');filaset.push('Primera actividad');
-            filaset.push('<form method="post"><div class="form-check"><input type="checkbox" class="form-check-input"></div></form>');
-            dataSet.push(filaset);
-            
-            filaset = new Array();
-            filaset.push('0');filaset.push('2');filaset.push('Segunda actividad');
-            filaset.push('<form method="post"><div class="form-check"><input type="checkbox" class="form-check-input"></div></form>');
-            dataSet.push(filaset);
-            
-            filaset = new Array();
-            filaset.push('0');filaset.push('3');filaset.push('Tercera actividad');
-            filaset.push('<form method="post"><div class="form-check"><input type="checkbox" class="form-check-input"></div></form>');
-            dataSet.push(filaset);
-            
-            filaset = new Array();
-            filaset.push('0');filaset.push('4');filaset.push('Cuarta actividad');
-            filaset.push('<form method="post"><div class="form-check"><input type="checkbox" class="form-check-input"></div></form>');
-            dataSet.push(filaset);
-            
-            $('#tab2').DataTable( {
-                "language": {
-                  "url": "//cdn.datatables.net/plug-ins/1.10.15/i18n/Spanish.json"
-                },
-                data: dataSet,
-                bPaginate: true,
-                bInfo: false,
-                searching: true,
-                responsive: true,
-                columns: [
-                  { title: "Código", "visible": false },
-                  { title: "#" },
-                  { title: "Actividad" },
-                  { title: "Validad" }
-                ]
-            } );
+            });           
         });
         
         function listarMenuOpciones(){
@@ -237,6 +186,7 @@
         	});
         }
     </script>
+    <script src="resources/js/funciones.js"></script>
     <!--  FUNCIONALIDAD AUXILIAR -->
   </body>  
 	

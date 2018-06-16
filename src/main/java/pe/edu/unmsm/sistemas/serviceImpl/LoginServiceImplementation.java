@@ -185,7 +185,7 @@ public class LoginServiceImplementation implements LoginService{
 	}	
 	public String editarUnidadDidactica(String idEditIdUD, String idEditUD, String idEditCantSem, HttpSession session) throws IOException, InterruptedException, ExecutionException
 	{
-		String uri = "https://firestore.googleapis.com/v1beta1/" + idEditIdUD;
+		String uri = "https://firestore.googleapis.com/v1beta1/" + idEditIdUD + "?updateMask.fieldPaths=nombre&updateMask.fieldPaths=semanas";
 		
 		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 	    RestTemplate restTemplate = new RestTemplate(requestFactory);
@@ -235,14 +235,15 @@ public class LoginServiceImplementation implements LoginService{
 	    		"}", String.class);
 	    return result;
 	}	
-	public String editarTema(String idEditIdUD, String idEditUD, String idEditCantSem, HttpSession session) throws IOException, InterruptedException, ExecutionException
+	public String editarTema(String idEditIdTem, String idEditTem, HttpSession session) throws IOException, InterruptedException, ExecutionException
 	{
-		String uri = "https://firestore.googleapis.com/v1beta1/" + idEditIdUD;
-	    RestTemplate restTemplate = new RestTemplate();
+		String uri = "https://firestore.googleapis.com/v1beta1/" + idEditIdTem  + "?updateMask.fieldPaths=nombre";
+		
+		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+	    RestTemplate restTemplate = new RestTemplate(requestFactory);
 	    String result = restTemplate.patchForObject(uri, "{\r\n" + 
 	    		"      \"fields\": {\r\n" + 
-	    		"        \"nombre\": { \"stringValue\": \"" + idEditUD + "\" },\r\n" + 
-	    		"        \"numero\": { \"integerValue\": \"" + idEditCantSem + "\" }\r\n" + 
+	    		"        \"nombre\": { \"stringValue\": \"" + idEditTem + "\" }\r\n" + 
 	    		"      }\r\n" + 
 	    		"}", String.class);	    
 	    return result;
@@ -255,14 +256,13 @@ public class LoginServiceImplementation implements LoginService{
 	    
 	    return result; 
 	}
-	public String guardarActividad(Integer semana, Integer temaid, String tema, String vals, String act, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {		
+	public String guardarActividad(Integer semana, Integer tema, String vals, String act, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {		
 		String result = "-1";		
-		String uri = base_rest + "silabus/" + session.getAttribute("idCurso") + "/semanas/" + semana + "/temas/" + temaid;
+		String uri = base_rest + "silabus/" + session.getAttribute("idCurso") + "/semanas/" + semana + "/temas/" + tema + "?updateMask.fieldPaths=actividades";
 		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 	    RestTemplate restTemplate = new RestTemplate(requestFactory);
 	    result = restTemplate.patchForObject(uri, "{\r\n" + 
-	    		"	\"fields\": {\r\n" + 
-	    		"	    \"numero\": { \"integerValue\": \"" + temaid + "\" },\r\n" + 
+	    		"	\"fields\": {\r\n" +  
 	    		"	    \"actividades\": {\r\n" + 
 	    		"	      \"arrayValue\": {\r\n" + 
 	    		"	        \"values\": [\r\n" + vals + 
@@ -271,8 +271,25 @@ public class LoginServiceImplementation implements LoginService{
 	    		"	          }\r\n" + 
 	    		"	        ]\r\n" + 
 	    		"	      }\r\n" + 
-	    		"	    },\r\n" + 
-	    		"	    \"nombre\": { \"stringValue\": \"" + tema + "\" }\r\n" + 
+	    		"	    },\r\n" +  
+	    		"	}\r\n" + 
+	    		"}", String.class);
+	    
+	    return result;
+	}
+	public String editarActividad(Integer semana, Integer tema, String idActOld, String IdEditAct, String vals, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException{
+		String result = "-1";		
+		String uri = base_rest + "silabus/" + session.getAttribute("idCurso") + "/semanas/" + semana + "/temas/" + tema + "?updateMask.fieldPaths=actividades";
+		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+	    RestTemplate restTemplate = new RestTemplate(requestFactory);
+	    result = restTemplate.patchForObject(uri, "{\r\n" + 
+	    		"	\"fields\": {\r\n" + 
+	    		"	    \"actividades\": {\r\n" + 
+	    		"	      \"arrayValue\": {\r\n" + 
+	    		"	        \"values\": [\r\n" + vals.replaceAll(idActOld, IdEditAct) +
+	    		"	        ]\r\n" + 
+	    		"	      }\r\n" + 
+	    		"	    },\r\n" +  
 	    		"	}\r\n" + 
 	    		"}", String.class);
 	    

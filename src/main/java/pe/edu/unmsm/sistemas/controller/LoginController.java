@@ -85,10 +85,7 @@ public class LoginController {
 	@RequestMapping(value = "/editarUnidadDidactica", method = RequestMethod.GET)
 	public @ResponseBody String editarUnidadDidactica(@RequestParam String idEditIdUD, 
 			@RequestParam String idEditUD, @RequestParam String idEditCantSem, 
-			HttpSession session) throws IOException, InterruptedException, ExecutionException {		
-		System.out.println(idEditIdUD);
-		System.out.println(idEditUD);
-		System.out.println(idEditCantSem);
+			HttpSession session) throws IOException, InterruptedException, ExecutionException {
 		String response = service.editarUnidadDidactica(idEditIdUD, idEditUD, idEditCantSem, session);
 		return response;		
 	}
@@ -110,6 +107,12 @@ public class LoginController {
 		String response = service.guardarTema(semana, tema, rows, session, model);
 		return response;
 	}
+	@RequestMapping(value = "/editarTema", method = RequestMethod.GET)
+	public @ResponseBody String editarTema(@RequestParam String idEditIdTem, 
+			@RequestParam String idEditTem,	HttpSession session) throws IOException, InterruptedException, ExecutionException {
+		String response = service.editarTema(idEditIdTem, idEditTem, session);
+		return response;		
+	}
 	@RequestMapping(value = "/listarActividades", method = RequestMethod.GET)
 	public @ResponseBody String listarActividades(@RequestParam Integer semana, @RequestParam Integer tema, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {		
 		String response = service.listarActividades(semana, tema, session, model);
@@ -117,9 +120,16 @@ public class LoginController {
 	}
 	@RequestMapping(value = "/guardarActividad", method = RequestMethod.POST)
 	public @ResponseBody String guardarActividad(@RequestParam Integer semana, 
-			@RequestParam Integer temaid, @RequestParam String tema, @RequestParam String vals, @RequestParam String act,
+			@RequestParam Integer tema, @RequestParam String vals, @RequestParam String act,
 			HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {		
-		String response = service.guardarActividad(semana, temaid, tema, vals, act, session, model);
+		String response = service.guardarActividad(semana, tema, vals, act, session, model);
+		return response;
+	}
+	@RequestMapping(value = "/editarActividad", method = RequestMethod.GET)
+	public @ResponseBody String editarActividad(@RequestParam Integer semana, 
+			@RequestParam Integer tema, @RequestParam String idActOld, @RequestParam String IdEditAct, @RequestParam String vals,
+			HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {		
+		String response = service.editarActividad(semana, tema, idActOld, IdEditAct, vals, session, model);
 		return response;
 	}
 }

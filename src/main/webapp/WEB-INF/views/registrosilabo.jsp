@@ -123,11 +123,13 @@
 		                <div class="col-md-12">
 		                    <table id="tab1" class="nowrap" style="width: 100%">
 		                        <thead class="bg-primary">
-		                        	<th>Codigo</th>
-		                            <th>#</th>
-		                            <th>Unidad didactica</th>
-		                            <th>Cantidad de semanas</th>
-		                            <th>Acción</th>
+		                        	<tr>
+			                        	<th>Codigo</th>
+			                            <th>#</th>
+			                            <th>Unidad didactica</th>
+			                            <th>Cantidad de semanas</th>
+			                            <th>Acción</th>
+			                        </tr>
 		                        </thead>
 		                    </table>
 		                </div>
@@ -169,11 +171,13 @@
 		                <div class="col-md-12">
 		                    <table id="tab2" class="nowrap" style="width: 100%">
 		                        <thead class="bg-primary">
-		                        	<th>Codigo</th>
-		                            <th>#</th>
-		                            <th>Semana</th>
-		                            <th>Tema</th>
-		                            <th>Acción</th>
+		                        	<tr>
+			                        	<th>Codigo</th>
+			                            <th>#</th>
+			                            <th>Semana</th>
+			                            <th>Tema</th>
+			                            <th>Acción</th>
+			                        </tr>
 		                        </thead>
 		                    </table>
 		                </div>
@@ -221,11 +225,13 @@
 			                <div class="col-md-12">
 			                    <table id="tab3" class="nowrap" style="width: 100%">
 			                        <thead class="bg-primary">
-			                        	<th>Codigo</th>
-			                            <th>#</th>
-			                            <th>Tema</th>
-			                            <th>Actividad</th>
-			                            <th>Acción</th>
+			                        	<tr>
+				                        	<th>Codigo</th>
+				                            <th>#</th>
+				                            <th>Tema</th>
+				                            <th>Actividad</th>
+				                            <th>Acción</th>
+				                        </tr>
 			                        </thead>
 			                    </table>
 			                </div>
@@ -251,15 +257,15 @@
 	                </button>
 	            </div>
 	            <div class="modal-body">
-	            		<input id="idEditIdUD" name="idEditIdUD" class="form-control" type="text" style="display:none;">
-		    			<div class="form-group">
-		    				<label for="exampleFormControlSelect1">Unidad didactica</label>
-				   			<input id="idEditUD" name="idEditUD" class="form-control" type="text">
-		    			</div>
-		      			<div class="form-group">
-							<label for="exampleFormControlSelect1">Cantidad de semanas</label>
-							<input id="idEditCantSem" name="idEditCantSem" class="form-control" type="number">
-						</div>
+            		<input id="idEditIdUD" name="idEditIdUD" class="form-control" type="hidden">
+	    			<div class="form-group">
+	    				<label for="exampleFormControlSelect1">Unidad didactica</label>
+			   			<input id="idEditUD" name="idEditUD" class="form-control" type="text">
+	    			</div>
+	      			<div class="form-group">
+						<label for="exampleFormControlSelect1">Cantidad de semanas</label>
+						<input id="idEditCantSem" name="idEditCantSem" class="form-control" type="number">
+					</div>
 	            </div>
 	            <div class="modal-footer">
 	                <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCELAR</button>
@@ -280,18 +286,19 @@
 	                </button>
 	            </div>
 	            <div class="modal-body">
-		    			<div class="form-group">
-		    				<label for="exampleFormControlSelect1">Semana</label>
-				   			<input class="form-control" type="number" disabled>
-		    			</div>
-		      			<div class="form-group">
-							<label for="exampleFormControlSelect1">TEMA</label>
-							<input class="form-control" type="text">
-						</div>
+	            	<input id="idEditIdTem" name="idEditIdTem" class="form-control" type="hidden">
+	    			<div class="form-group">
+	    				<label for="exampleFormControlSelect1">Semana</label>
+			   			<input id="IdEditSem" class="form-control" type="number" disabled>
+	    			</div>
+	      			<div class="form-group">
+						<label for="exampleFormControlSelect1">TEMA</label>
+						<input id="idEditTem" class="form-control" type="text">
+					</div>
 	            </div>
 	            <div class="modal-footer">
 	                <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCELAR</button>
-	                <button type="button" class="btn btn-primary">GUARDAR</button>
+	                <button onclick="actualizarTem();" type="button" class="btn btn-primary">GUARDAR</button>
 	            </div>
 	        </div>
 	    </div>
@@ -308,18 +315,19 @@
 	                </button>
 	            </div>
 	            <div class="modal-body">
+	            		<input id="idActOld" name="idActOld" class="form-control" type="hidden">
 		    			<div class="form-group">
 		    				<label for="exampleFormControlSelect1">Tema</label>
-				   			<input class="form-control" type="text" disabled>
+				   			<input id="IdEditTem2" class="form-control" type="text" disabled>
 		    			</div>
 		      			<div class="form-group">
 							<label for="exampleFormControlSelect1">Actividad</label>
-							<input class="form-control" type="text">
+							<input id="IdEditAct" class="form-control" type="text">
 						</div>
 	            </div>
 	            <div class="modal-footer">
 	                <button type="button" class="btn btn-secondary" data-dismiss="modal">CANCELAR</button>
-	                <button type="button" class="btn btn-primary">GUARDAR</button>
+	                <button onclick="actualizarAct();" type="button" class="btn btn-primary">GUARDAR</button>
 	            </div>
 	        </div>
 	    </div>
