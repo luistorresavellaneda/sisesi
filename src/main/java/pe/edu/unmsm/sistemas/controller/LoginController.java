@@ -37,6 +37,11 @@ public class LoginController {
 		String response = service.verifyLogin(usuario, contrasenia, session, model);
 		return response;
 	}
+	@RequestMapping(value = "/obtenerUsuario", method = RequestMethod.GET)
+	public @ResponseBody String obtenerUsuario(HttpSession session, Model model) {
+		String response = service.obtenerUsuario(session);
+		return response;
+	}
 	@RequestMapping(value = "/home", method = RequestMethod.GET)
 	public String home(HttpSession session,Model model) {
 		String usuario = (String) session.getAttribute("usersession");

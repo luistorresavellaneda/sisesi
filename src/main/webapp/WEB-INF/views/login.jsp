@@ -56,8 +56,8 @@
 							<i class="fa fa-lock" aria-hidden="true"></i>
 						</span>
 					</div>
-					<div>
-						<label>${loginError}</label>
+					<div id="loginError">
+						<label style="color:red;"> ${loginError} </label>
 					</div>
 					<div class="container-login100-form-btn">
 						<button type="submit"  class="login100-form-btn">
@@ -65,7 +65,7 @@
 						</button>
 					</div>
 
-					<div class="text-center p-t-12">
+					<!-- <div class="text-center p-t-12">
 						<span class="txt1">
 							Olvidó su
 						</span>
@@ -79,7 +79,7 @@
 							Regístrate
 							<i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
 						</a>
-					</div>
+					</div> -->
 				</form>
 			</div>
 		</div>
@@ -103,6 +103,10 @@
 		$('.js-tilt').tilt({
 			scale: 1.1
 		})
+		
+		$(document).ready(function () {        	
+        	$("#loginError").hide(4000);
+        });
 	</script>
 	<script src="resources/js/main.js"></script>
 

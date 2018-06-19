@@ -55,7 +55,7 @@
               <li id="rol1" class="active"><a href="<c:url value="registro" />">Registro de silabo</a></li>
               <li id="rol2"><a href="<c:url value="control" />">Control de avance de silabo</a></li>
               <li align="right" class="">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> USUARIO <span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <label id="usuario"></label> <span class="caret"></span></a>
                 <ul class="dropdown-menu">
                   <li class=""><a href="<c:url value="/" />">Cerrar sesion</a></li>
                 </ul>
@@ -126,13 +126,27 @@
         $(document).ready(function () {        	
         	//Te muestra el menú permitido para este 
         	//usuario con un rol de un perfil
+        	obtenerUsuario();
         	listarMenuOpciones();        	
         	//Se configuran las opciones del menú 
         	configMenuOpciones();
         	//Se muestran los datos asignados al usuario
         	mostrarListaCursos();
         });
-        
+        function obtenerUsuario(){
+        	$.ajax({
+        		type : 'GET',
+        		dataType : 'text',
+        		url : 'obtenerUsuario',
+        		success : function(result) 
+        		{
+        			$("#usuario").text(result);
+        		},
+        		error : function(xhr, ajaxOptions, thrownError) {
+          			alert(xhr.status + ' ' + thrownError);
+        		}
+        	});
+        }
         function listarMenuOpciones(){
         	$("#rol1").hide();
         	//con esto muestro las opciones según el perfil del usuario...

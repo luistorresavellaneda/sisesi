@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 public interface LoginService {
 	
 	public String verifyLogin(String usuario, String contrasenia, HttpSession session, Model model) throws InterruptedException, ExecutionException, IOException;
+	public String obtenerUsuario(HttpSession session);
 	public String listarMenuOpciones(HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException;
 	public String listarCursosPorCoordinador(HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException;
 	//Unidad didactica

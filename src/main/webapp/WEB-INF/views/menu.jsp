@@ -51,7 +51,7 @@
               <li id="rol1"><a href="<c:url value="registro" />">Registro de silabo</a></li>
               <li id="rol2"><a href="<c:url value="control" />">Control de avance de silabo</a></li>
               <li align="right" class="">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> USUARIO <span class="caret"></span></a>
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> <label id="usuario"></label> <span class="caret"></span></a>
                 <ul class="dropdown-menu">
                   <li class=""><a href="<c:url value="/" />">Cerrar sesion</a></li>
                 </ul>
@@ -63,8 +63,26 @@
 
       <!-- Main component for a primary marketing message or call to action -->
       <div class="jumbotron">
-        
-      </div>
+<!--       	<iframe width="0" height="0" src="https://www.youtube.com/embed/dF1I6zGwB1Q?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen=""></iframe> -->
+      	<!-- Card deck -->
+		<div class="card-deck">
+		  <!-- Card -->
+		  <div class="card mb-4">
+		    <!--Card image-->
+		    <div class="view overlay">
+		      <img src="resources/images/sanmarcospta0.jpg" alt="IMG">
+		      <a href="#!">
+		        <div class="mask rgba-white-slight"></div>
+		      </a>
+		    </div>
+		    <!--Card content-->
+		    <div class="card-body">
+		      <!--Title-->
+		      <h4 class="card-title"><b>BIENVENIDO AL SISTEMA DE CONTROL DE AVANCE DEL SILABO</b></h4>
+		    </div>
+		  </div>
+		  <!-- Card -->
+      	</div>
 
     </div> <!-- /container -->
 	
@@ -94,7 +112,8 @@
 	
 	<!-- FUNCIONALIDAD AUXILIAR -->
     <script>
-        $(document).ready(function () {        	
+        $(document).ready(function () {
+        	obtenerUsuario();
         	listarMenuOpciones();        	
         	$('#inicio').click(function () {
         		$("li").removeClass();
@@ -106,10 +125,24 @@
             });
         	$('#rol2').click(function () {
         		$("li").removeClass();
-        		$("#rol2").addClass("active");                
+        		$("#rol2").addClass("active");
             });
-        });
-        
+        });        
+        function obtenerUsuario(){
+        	$.ajax({
+        		type : 'GET',
+        		dataType : 'text',
+        		url : 'obtenerUsuario',
+        		success : function(result) 
+        		{
+        			//console.log(result);
+        			$("#usuario").text(result);
+        		},
+        		error : function(xhr, ajaxOptions, thrownError) {
+          			alert(xhr.status + ' ' + thrownError);
+        		}
+        	});
+        }
         function listarMenuOpciones(){
         	$("#rol1").hide();
         	//Muestro las opciones según el perfil del usuario...
