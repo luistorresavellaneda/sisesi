@@ -23,9 +23,13 @@ public interface LoginService {
 	public String guardarTema(Integer semana, String tema, Integer rows, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException;
 	public String editarTema(String idEditIdTem, String idEditTem, HttpSession session) throws IOException, InterruptedException, ExecutionException;
 	//Actividad
-	public String listarActividades(Integer semana, Integer tema, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException;
+	public String listarActividades(Integer semana, Integer tema, String turno, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException;
 	public String guardarActividad(Integer semana, Integer tema, String vals, String act, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException;
 	public String editarActividad(Integer semana, Integer tema, String idActOld, String IdEditAct, String vals, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException;
+	
+	public String getObs(Integer semana, String turno, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException;
+	public String updateRespuesta(Integer semana, Integer tema, String turno, boolean val, Integer indice, Integer rows, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException;
+	public String updateObs(Integer semana, String turno, String val, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException;
 	
 }
 

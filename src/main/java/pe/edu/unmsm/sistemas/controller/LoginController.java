@@ -119,8 +119,8 @@ public class LoginController {
 		return response;		
 	}
 	@RequestMapping(value = "/listarActividades", method = RequestMethod.GET)
-	public @ResponseBody String listarActividades(@RequestParam Integer semana, @RequestParam Integer tema, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {		
-		String response = service.listarActividades(semana, tema, session, model);
+	public @ResponseBody String listarActividades(@RequestParam Integer semana, @RequestParam Integer tema, @RequestParam String turno, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {		
+		String response = service.listarActividades(semana, tema, turno, session, model);
 		return response;
 	}
 	@RequestMapping(value = "/guardarActividad", method = RequestMethod.POST)
@@ -137,4 +137,25 @@ public class LoginController {
 		String response = service.editarActividad(semana, tema, idActOld, IdEditAct, vals, session, model);
 		return response;
 	}
+	
+	@RequestMapping(value = "/getObs", method = RequestMethod.GET)
+	public @ResponseBody String getObs(@RequestParam Integer semana, 
+			@RequestParam String turno, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {		
+		String response = service.getObs(semana, turno, session, model);
+		return response;
+	}
+	@RequestMapping(value = "/updateRespuesta", method = RequestMethod.GET)
+	public @ResponseBody String updateRespuesta(@RequestParam Integer semana, 
+			@RequestParam Integer tema, @RequestParam String turno, @RequestParam boolean val, @RequestParam Integer indice, @RequestParam Integer rows,
+			HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {		
+		String response = service.updateRespuesta(semana, tema, turno, val, indice, rows, session, model);
+		return response;
+	}
+	@RequestMapping(value = "/updateObs", method = RequestMethod.GET)
+	public @ResponseBody String updateObs(@RequestParam Integer semana, 
+			@RequestParam String turno, @RequestParam String val, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {		
+		String response = service.updateObs(semana, turno, val, session, model);
+		return response;
+	}
+	
 }

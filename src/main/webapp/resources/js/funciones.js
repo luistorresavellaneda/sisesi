@@ -253,6 +253,32 @@ function actualizarTem(){
 } 
 /* FIN TEMA */
 
+function ActionSemana(v, select){
+	selectTemas(v, select);
+	get_obs(v, document.getElementById("turno3").value);
+}
+
+function ActionTurno(s, v, t){
+	if(v != 0) listarActividades2(s, v, t);
+	get_obs(s, t);
+}
+
+function get_obs(v, t){
+	$.ajax({
+		type : 'GET',
+		dataType : 'json',
+		url : 'getObs',
+		data: 'semana='+v+"&turno="+t,
+		success : function(result) 
+		{
+			document.getElementById("observaciones").value = result.observacion.stringValue;
+		},
+		error : function(xhr, ajaxOptions, thrownError) {
+	 			alert(xhr.status + ' ' + thrownError);
+   		}
+   	}); 
+}
+
 function selectTemas(v, select){
 	$.ajax({
 		type : 'GET',
@@ -286,7 +312,7 @@ function listarActividades(v){
 		type : 'GET',
 		dataType : 'text',
 		url : 'listarActividades',
-		data: 'semana='+semana+"&tema="+v,
+		data: 'semana='+semana+"&tema="+v+"&turno=n",
 		success : function(result) 
 		{
 			var data = jQuery.parseJSON(result);
@@ -326,8 +352,7 @@ function listarActividades(v){
    		}
    	}); 
 }
-function listarActividades2(v){
-	var semana = $("#semana3").val();
+function listarActividades2(s, v, t){
 	$('#tab2').DataTable().destroy();
 	var dataSet = new Array();
 	var filaset;
@@ -335,17 +360,17 @@ function listarActividades2(v){
 		type : 'GET',
 		dataType : 'text',
 		url : 'listarActividades',
-		data: 'semana='+semana+"&tema="+v,
+		data: 'semana='+s+"&tema="+v+"&turno="+t,
 		success : function(result) 
 		{
 			var data = jQuery.parseJSON(result);
 			var vals = "";
-			$.each(data.fields.actividades.arrayValue.values, function(i, item) {
+			$.each(data, function(i, item) {
 				filaset = new Array();
 				filaset.push(i);
 				filaset.push(i+1);
 				filaset.push(item.stringValue);
-				filaset.push('<form method="post"><div class="form-check"><input type="checkbox" class="form-check-input"></div></form>');
+				filaset.push('<form method="post"><div class="form-check"><input type="checkbox" '+(item.booleanValue==true?'checked':'')+' class="form-check-input" onclick="update_res(this.checked,'+i+')"></div></form>');
 				dataSet.push(filaset);       			    
 			});
 			// TABLA DE TEMA 
@@ -370,6 +395,43 @@ function listarActividades2(v){
 	 			alert(xhr.status + ' ' + thrownError);
    		}
    	}); 
+}
+function update_res(c, i){
+	var semana = $("#semana3").val();
+	var v = $("#tema3").val();
+	var t = $("#turno3").val();
+	$.ajax({
+		type : 'GET',
+		dataType : 'json',
+		data: 'semana='+semana+'&tema='+v+'&turno='+t+"&val="+c+"&indice="+i+"&rows="+$('#tab2').DataTable().rows().count(),
+		url : 'updateRespuesta',
+		contentType: "application/json; charset=utf-8",
+		success : function(result) 
+		{
+			
+		},
+		error : function(xhr, ajaxOptions, thrownError) {
+  			alert(xhr.status + ' ' + thrownError);
+		}
+	});
+}
+function post_obs(v){
+	var semana = $("#semana3").val();
+	var t = $("#turno3").val();
+	$.ajax({
+		type : 'GET',
+		dataType : 'json',
+		data: 'semana='+semana+'&turno='+t+"&val="+v,
+		url : 'updateObs',
+		contentType: "application/json; charset=utf-8",
+		success : function(result) 
+		{
+			
+		},
+		error : function(xhr, ajaxOptions, thrownError) {
+  			alert(xhr.status + ' ' + thrownError);
+		}
+	});
 }
 function guardarActividad(){
 	var semana = $("#semana3").val();

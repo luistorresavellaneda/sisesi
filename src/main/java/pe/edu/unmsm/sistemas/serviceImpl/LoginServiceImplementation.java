@@ -5,11 +5,12 @@ import java.util.concurrent.ExecutionException;
 
 import javax.servlet.http.HttpSession;
 
-import org.json.JSONObject;
 import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.cloud.firestore.Firestore;
@@ -239,10 +240,45 @@ public class LoginServiceImplementation implements LoginService{
 	    return result;
 	}
 	//////
-	public String listarActividades(Integer semana, Integer tema, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {		
-		String uri = base_rest + "silabus/" + session.getAttribute("idCurso") + "/semanas/" + semana + "/temas/" + tema;
-		RestTemplate restTemplate = new RestTemplate();
-	    String result = restTemplate.getForObject( uri, String.class);
+	public String listarActividades(Integer semana, Integer tema, String turno, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException {
+		String result = "";
+		JSONObject jsonObj;
+		JSONArray ar1, ar2, ar;
+		if(turno.equals("n"))
+		{
+			String uri = base_rest + "silabus/" + session.getAttribute("idCurso") + "/semanas/" + semana + "/temas/" + tema;
+			RestTemplate restTemplate = new RestTemplate();
+			result = restTemplate.getForObject(uri, String.class);
+		}
+		else
+		{
+			//actividaes
+			String uri = base_rest + "silabus/" + session.getAttribute("idCurso") + "/semanas/" + semana + "/temas/" + tema;
+			RestTemplate restTemplate = new RestTemplate();			
+			String result1 = restTemplate.getForObject(uri, String.class);
+			jsonObj = new JSONObject(result1);
+			ar1 = jsonObj.getJSONObject("fields").getJSONObject("actividades").getJSONObject("arrayValue").getJSONArray("values");
+			//respuestas
+			try {
+				uri = base_rest + "respuestas/" + session.getAttribute("idCurso") + "g1t" + turno + "_s" + semana + "_t" + tema;
+				result1 = restTemplate.getForObject(uri, String.class);
+				jsonObj = new JSONObject(result1);
+				ar2 = jsonObj.getJSONObject("fields").getJSONObject("checklist").getJSONObject("arrayValue").getJSONArray("values");
+			}catch (RestClientException e) {
+				ar2 = new JSONArray();
+			}
+			ar = new JSONArray();
+			for(int i=0;i<ar1.length();i++)
+		    {
+		    	jsonObj = ar1.getJSONObject(i);
+		    	if(!ar2.isNull(i))
+		    		jsonObj = jsonObj.put("booleanValue",ar2.getJSONObject(i).getBoolean("booleanValue"));
+		    	else
+		    		jsonObj = jsonObj.put("booleanValue",false);
+		    	ar.put(jsonObj);
+		    }
+			result = ar.toString();
+		}
 	    
 	    return result; 
 	}
@@ -283,6 +319,101 @@ public class LoginServiceImplementation implements LoginService{
 	    		"	}\r\n" + 
 	    		"}", String.class);
 	    
+	    return result;
+	}
+	
+	public String getObs(Integer semana, String turno, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException{
+		String uri = base_rest + "observaciones/" + session.getAttribute("idCurso") + "g1t" + turno + "_s" + semana;
+		String result = "";
+		RestTemplate restTemplate = new RestTemplate();
+
+		try {
+			result = restTemplate.getForObject(uri, String.class);
+		    JSONObject jsonObj = new JSONObject(result);
+		    
+		    if(jsonObj.has("fields")) result = jsonObj.getJSONObject("fields").toString();
+		    else result = "{\"observacion\": { \"stringValue\": \"\" }}";
+		} catch (RestClientException e) {
+			result = "{\"observacion\": { \"stringValue\": \"\" }}";
+		}
+			    
+	    return result;
+	}
+	public String updateRespuesta(Integer semana, Integer tema, String turno, boolean val, Integer indice, Integer rows, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException{
+		String result = "";
+		JSONObject jsonObj;
+		JSONArray ar;
+		String uri = base_rest + "respuestas/" + session.getAttribute("idCurso") + "g1t" + turno + "_s" + semana + "_t" + tema;
+		RestTemplate restTemplate = new RestTemplate();
+		try {
+			String result1 = restTemplate.getForObject(uri, String.class);
+			jsonObj = new JSONObject(result1);
+			ar = jsonObj.getJSONObject("fields").getJSONObject("checklist").getJSONObject("arrayValue").getJSONArray("values");
+		}catch (RestClientException e) {
+			String uri_aux = base_rest + "respuestas/?documentId="+ session.getAttribute("idCurso") + "g1t" + turno + "_s" + semana + "_t" + tema;
+			restTemplate = new RestTemplate();
+			String checklist = "";
+			for(int i = 0; i < rows; i++)
+				checklist += "{ \"booleanValue\": false },";
+		    result = restTemplate.postForObject( uri_aux, "{\r\n" + 
+		    		"      \"fields\": {\r\n" + 
+		    		"        \"id\": { \"stringValue\": \"" + session.getAttribute("idCurso") + "g1t" + turno + "_s" + semana + "_t" + tema + "\" },\r\n" + 
+		    		"	     \"checklist\": {\r\n" + 
+		    		"	       \"arrayValue\": {\r\n" + 
+		    		"	         \"values\":[ " + checklist + 
+		    		"	       ]}\r\n" + 
+		    		"	     },\r\n" + 
+		    		"      }\r\n" + 
+		    		"}", String.class);
+		    String result1 = restTemplate.getForObject(uri, String.class);
+			jsonObj = new JSONObject(result1);
+			ar = jsonObj.getJSONObject("fields").getJSONObject("checklist").getJSONObject("arrayValue").getJSONArray("values");
+		}
+		ar.getJSONObject(indice).put("booleanValue", val);
+		
+		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+	    restTemplate = new RestTemplate(requestFactory);
+	    result = restTemplate.patchForObject(uri + "?updateMask.fieldPaths=checklist", "{\r\n" + 
+	    		"	\"fields\": {\r\n" + 
+	    		"	    \"checklist\": {\r\n" + 
+	    		"	      \"arrayValue\": {\r\n" + 
+	    		"	        \"values\": " + ar.toString() + 
+	    		"	      }\r\n" + 
+	    		"	    },\r\n" +  
+	    		"	}\r\n" + 
+	    		"}", String.class);
+	    
+	    return result;
+	}
+	
+	public String updateObs(Integer semana, String turno, String val, HttpSession session, Model model) throws IOException, InterruptedException, ExecutionException{
+		String result = "";
+		String uri = base_rest + "observaciones/" + session.getAttribute("idCurso") + "g1t" + turno + "_s" + semana;
+		RestTemplate restTemplate;
+		try {
+			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+		    restTemplate = new RestTemplate(requestFactory);
+		    result = restTemplate.patchForObject(uri + "?updateMask.fieldPaths=observacion", "{\r\n" + 
+		    		"	\"fields\": {\r\n" + 
+		    		"	    \"observacion\": {\r\n" + 
+		    		"	      \"stringValue\": \r\n\"" + val + 
+		    		"	      \"\r\n" + 
+		    		"	    },\r\n" +  
+		    		"	}\r\n" + 
+		    		"}", String.class);
+		}catch (RestClientException e) {
+			String uri_aux = base_rest + "observaciones/?documentId="+ session.getAttribute("idCurso") + "g1t" + turno + "_s" + semana;
+			restTemplate = new RestTemplate();
+		    result = restTemplate.postForObject( uri_aux, "{\r\n" + 
+		    		"      \"fields\": {\r\n" + 
+		    		"        \"id\": { \"stringValue\": \"" + session.getAttribute("idCurso") + "g1t" + turno + "_s" + semana + "\" },\r\n" + 
+		    		"	     \"observacion\": {\r\n" + 
+		    		"	       \"stringValue\": \r\n\"" + val + 
+		    		"	       \"\r\n" + 
+		    		"	     },\r\n" + 
+		    		"      }\r\n" + 
+		    		"}", String.class);
+		}	    
 	    return result;
 	}
 }

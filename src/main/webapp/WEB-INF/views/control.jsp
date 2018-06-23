@@ -70,22 +70,31 @@
       <div class="jumbotron" style="padding-top:10px;">
       	<h4 style="text-align:center;color:blue;">CONTROL DE AVANCE DEL SILABO</h4>
       	<div class="col-md-12">
-      		<div class="col-md-4">
+      		<div class="col-md-3">
+      			<div class="form-group">
+				   <label for="exampleFormControl">Turno</label>
+				   <select class="form-control" id="turno3" onchange="ActionTurno(document.getElementById('semana3').value, document.getElementById('tema3').value, this.value)">
+				   		<option value="t">Teorico</option>
+				   		<option value="p">Practico</option>
+				   </select>
+				 </div>
+      		</div>
+      		<div class="col-md-3">
       			<div class="form-group">
 				   <label for="exampleFormControlSelect1">Unidad didactica</label>
 				   <select class="form-control" id="unidadDidactica3" onchange="listarSemanas(this.value, 'semana3')"></select>
 				 </div>
       		</div>
-      		<div class="col-md-4">
+      		<div class="col-md-3">
       			<div class="form-group">
 				   <label for="exampleFormControlSelect1">Semana</label>
-				   <select class="form-control" id="semana3" onchange="selectTemas(this.value, 'tema3')"></select>
+				   <select class="form-control" id="semana3" onchange="ActionSemana(this.value, 'tema3')"></select>
 				 </div>
       		</div>
-      		<div class="col-md-4">
+      		<div class="col-md-3">
       			<div class="form-group">
 				   <label for="exampleFormControlSelect1">Tema</label>
-				   <select class="form-control" id="tema3" onchange="listarActividades2(this.value)"></select>
+				   <select class="form-control" id="tema3" onchange="listarActividades2(document.getElementById('semana3').value, this.value, document.getElementById('turno3').value)"></select>
 				 </div>
       		</div>
       	</div>
@@ -112,7 +121,7 @@
 	                <div class="col-md-8">
 	                </div>
 	                <div class="col-md-2">
-	                	<button type="button" class="btn btn-primary">GUARDAR</button>
+	                	<button type="button" class="btn btn-primary" onclick="post_obs(document.getElementById('observaciones').value)">GUARDAR</button>
 	                </div>
 	            </div>
 	        </div>
